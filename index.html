@@ -56,7 +56,21 @@
 				asteroidsAssets.push("a" + i + ".png");
 			});
 
-			var assets = ["start.png", "pod.png", "boom.png", "boom.mp3"];
+			var assets = ["background.png", "start.png", "pod.png", "boom.png", "boom.mp3", "starting.mp3", "ending.mp3"];
+			/* 
+			starting.mp3 source:
+			Track: 32Stitches - Olympus [NCS Release]
+			Music provided by NoCopyrightSounds.
+			Watch: https://youtu.be/2HhAz5rWzsI
+			Free Download / Stream: http://ncs.io/Olympus
+
+			ending.mp3 source:
+			Track: RudeLies & Facading - Arabian Nights [NCS Release]
+			Music provided by NoCopyrightSounds.
+			Watch: https://youtu.be/g-PtIjywmac
+			Free Download / Stream: http://ncs.io/ArabianNights
+			*/
+
 			assets = assets.concat(asteroidsAssets);
 
 			frame.loadAssets(assets, "assets/");
@@ -72,9 +86,13 @@
 				//main game
 				function gamePlay() {
 
+					var starting = frame.asset("starting.mp3").play({ volume: .5 });
 					start.removeFrom(stage); //remove starting frame
 
-					var asteroids = new Container().addTo(); // container: hold other display objects, add that container to the current stage
+					var background = frame.asset("background.png");
+					var backgroundPic = background.addTo(stage);
+
+					var asteroids = new Container().addTo(); //container: hold other display objects, add that container to the current stage
 
 					interval({ min: 1000, max: 4000 }, function () {
 						var margin = 200;
@@ -85,7 +103,8 @@
 							[-margin, rand(stageH), stageW + margin, rand(stageH)]
 						];
 
-						var location = shuffle(data)[0]; // randomly shuffles elements in data array and the new array is now the location array
+						//randomly shuffles elements in data array and the new array is now the location array
+						var location = shuffle(data)[0];
 
 						var asteroid = frame.asset(shuffle(asteroidsAssets)[0])
 							.clone()
@@ -135,10 +154,12 @@
 
 					stage.update();
 
+					//timer goes up every 1 second
 					var timer = interval(1000, function updateTime() {
 						timerBox.text = String(++time + " s");
 					}, null, false);
 
+					//destroy asteroid after effects, update counter box
 					asteroids.on("mousedown", function (e) {
 						var explosion = new Sprite(frame.asset("boom.png"), 8, 6)
 							.centerReg()
@@ -156,7 +177,9 @@
 
 					Ticker.add(function () {
 						asteroids.loop(function (asteroid) {
+							//if asteroid hits spaceship, remove everything and display message
 							if (asteroid.hitTestCircle(pod)) {
+								zim.animate(starting, { volume: 0 }, 1000);
 								pod.removeFrom();
 								asteroids.removeFrom();
 								var explosion = new Sprite(frame.asset("boom.png"), 8, 6)
@@ -185,7 +208,34 @@
 									.show();
 
 								stage.update();
+							}
 
+							//if player survived for 120 seconds, remove everything and display success message, play music!
+							if (time === 120) {
+								zim.animate(starting, { volume: 0 }, 1000);
+								pod.removeFrom();
+								asteroids.removeFrom();
+								timer.pause();
+
+								var ending = frame.asset("ending.mp3").play({ volume: .5 });
+
+								var pane = new Pane({
+									width: 672,
+									height: 378,
+									label: "\nCongratulations! \n\nThanks for clearing: " + counter + " meteorite(s). \n\nSince you survived for 120 seconds, \nyou win!",
+									color: "#f2f2f2",
+									drag: true,
+									modal: false,
+									corner: 12,
+									barColor: "#cccccc",
+									bar: "Success!",
+									close: true,
+									closeColor: "white"
+								})
+									.show();
+
+								time = 0;
+								stage.update();
 							}
 						})
 					});
