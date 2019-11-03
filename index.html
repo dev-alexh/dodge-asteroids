@@ -86,7 +86,7 @@
 				//main game
 				function gamePlay() {
 
-					var starting = frame.asset("starting.mp3").play({ volume: .5 });
+					var starting = frame.asset("starting.mp3").play({ volume: .4 });
 					start.removeFrom(stage); //remove starting frame
 
 					var background = frame.asset("background.png");
@@ -217,7 +217,7 @@
 								asteroids.removeFrom();
 								timer.pause();
 
-								var ending = frame.asset("ending.mp3").play({ volume: .5 });
+								var ending = frame.asset("ending.mp3").play({ volume: .4 });
 
 								var pane = new Pane({
 									width: 672,
