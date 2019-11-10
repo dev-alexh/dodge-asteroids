@@ -1,5 +1,5 @@
 # dodge-asteroids
-Dodge the Asteroid! Game web project is a game where the player must avoid or destroy asteroids in their way. The goal is to survive as long as possible and rack up the most points.
+Dodge the Asteroid! Game web project is a game where the player must avoid or destroy asteroids in their way. The goal is to survive as long as possible and rack up the most points. If the player survives for 2 minutes, they win the game!
 
 Languages: HTML5, CSS3, JS
 
